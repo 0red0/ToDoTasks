@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <!-- https://elzero.org/javascript-2021-bom-challenge/ -->
+</head>
+<style>
+   * {
+      box-sizing: border-box;
+      border-radius: 10px;
+   }
+
+   body {
+      background-color: #033;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', sans-serif;
+   }
+
+   main {
+      background-color: aquamarine;
+      width: fit-content;
+      padding: 30px;
+   }
+
+   input {
+      padding: 10px 30px;
+      border: none;
+   }
+
+   .input {
+      width: calc(100% - 125px);
+   }
+
+   .add {
+      background-color: #449141;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+   }
+
+   section {
+      background-color: white;
+      /* margin: 30px 0;
+      padding: 10px 40px; */
+   }
+
+   div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 0 30px;
+   }
+
+   div:first-of-type {
+      margin-top: 20px;
+   }
+
+   button {
+      background-color: rgba(255, 34, 34, 0.89);
+      border: none;
+      padding: 4px 10px;
+      color: white;
+      cursor: pointer;
+   }
+</style>
+
+<body>
+   <main>
+      <form action="">
+         <input type="text" class="input">
+         <input type="submit" value="Add Task" class="add">
+      </form>
+      <section>
+         <!-- <div>
+            <p>lorem mY Hgilees</p>
+            <button>Delete</button>
+         </div> -->
+      </section>
+   </main>
+</body>
+<script>
+
+   const inputField = document.querySelector(".input")
+   const entryHolder = document.querySelector("section")
+   const addButton = document.querySelector(".add")
+
+   window.onload = () => {
+      if (localStorage.length > 0) {
+         for (let i = 0; i < localStorage.length; i++) {
+
+            let myDiv = document.createElement("div")
+            let myP = document.createElement("P")
+            let btn = document.createElement("BUTTON")
+            myP.innerText = localStorage.key([i])
+            btn.innerText = "Delete"
+            myDiv.append(myP)
+            myDiv.append(btn)
+            entryHolder.append(myDiv)
+            btn.addEventListener('click', (e) => {
+               e.target.parentElement.remove()
+               localStorage.removeItem(`${myP.innerText}`)
+            })
+         }
+      }
+   }
+
+   addButton.onclick = (e) => {
+      e.preventDefault();
+      if (inputField.value !== "") {
+         let myDiv = document.createElement("div")
+         let myP = document.createElement("P")
+         let btn = document.createElement("BUTTON")
+         myP.innerText = inputField.value
+         btn.innerText = "Delete"
+         myDiv.append(myP)
+         myDiv.append(btn)
+         entryHolder.append(myDiv)
+         btn.addEventListener('click', (e) => {
+            e.target.parentElement.remove()
+            localStorage.removeItem(`${myP.innerText}`)
+         })
+         localStorage.setItem(`${inputField.value}`, inputField.value)
+      }
+      inputField.value = "";
+   }
+
+</script>
+
+</html>
