@@ -1,42 +1,84 @@
-const inputField = document.querySelector(".input");
-const entryHolder = document.querySelector("section");
-const addButton = document.querySelector(".add");
+const input = document.querySelector("input");
+const addBtn = document.querySelector(".add");
+const tasksHolder = document.querySelector(".holder");
+let tasks = [];
+// Get Array from LocalStorage
+if (localStorage.getItem("Tasks")) {
+   tasks = JSON.parse(localStorage.getItem("Tasks"));
+}
+createTask(tasks);
+// Add a task
+addBtn.addEventListener("click", arrOfTasks);
+document.addEventListener("keyup", (e) => {
+   if (e.key === "Enter") {
+      arrOfTasks();
+   }
+});
+// Add Input to array & array to localStorage
+function arrOfTasks() {
+   if (input.value != "") {
+      let objTask = {
+         id: Date.now(),
+         title: input.value,
+         done: false,
+      };
+      tasks.push(objTask);
+      createTask(tasks);
+      window.localStorage.setItem("Tasks", JSON.stringify(tasks));
+      input.value = "";
+   } else {
+      return;
+   }
+   return tasks;
+}
 
-window.onload = () => {
-   if (localStorage.length > 0) {
-      for (let i = 0; i < localStorage.length; i++) {
-         let myDiv = document.createElement("div");
-         let myP = document.createElement("P");
-         let btn = document.createElement("BUTTON");
-         myP.innerText = localStorage.key([i]);
-         btn.innerText = "Delete";
-         myDiv.append(myP);
-         myDiv.append(btn);
-         entryHolder.append(myDiv);
-         btn.addEventListener("click", (e) => {
-            e.target.parentElement.remove();
-            localStorage.removeItem(`${myP.innerText}`);
-         });
+// Create Task Elements
+function createTask(arr) {
+   tasksHolder.innerHTML = "";
+   let counter = 1;
+   arr.forEach((e) => {
+      let div = document.createElement("div");
+      div.classList.add("task");
+      if (e.done) {
+         div.classList.add("done");
       }
+      div.id = e.id;
+      let p = document.createElement("p");
+      p.innerText = counter + "_ " + e.title;
+      counter++;
+      let delBtn = document.createElement("button");
+      delBtn.classList.add("del");
+      delBtn.innerText = "+";
+      // Append
+      div.appendChild(p);
+      div.appendChild(delBtn);
+      tasksHolder.appendChild(div);
+   });
+}
+// Delete button
+tasksHolder.addEventListener("click", (e) => {
+   if (e.target.classList.contains("del")) {
+      e.target.parentElement.remove();
+      removeFromLocalStorage(e.target.parentElement.id);
    }
-};
-
-addButton.onclick = (e) => {
-   e.preventDefault();
-   if (inputField.value !== "") {
-      let myDiv = document.createElement("div");
-      let myP = document.createElement("P");
-      let btn = document.createElement("BUTTON");
-      myP.innerText = inputField.value;
-      btn.innerText = "Delete";
-      myDiv.append(myP);
-      myDiv.append(btn);
-      entryHolder.append(myDiv);
-      btn.addEventListener("click", (e) => {
-         e.target.parentElement.remove();
-         localStorage.removeItem(`${myP.innerText}`);
-      });
-      localStorage.setItem(`${inputField.value}`, inputField.value);
+});
+// Delete Handler
+function removeFromLocalStorage(id) {
+   tasks = tasks.filter((x) => x.id != id);
+   window.localStorage.setItem("Tasks", JSON.stringify(tasks));
+}
+// Done state Handler
+tasksHolder.addEventListener("click", (e) => {
+   if (e.target.classList.contains("task")) {
+      e.target.classList.toggle("done");
+      updateDoneState(e.target.id);
    }
-   inputField.value = "";
-};
+});
+function updateDoneState(id) {
+   tasks.forEach((x) => {
+      if (x.id == id) {
+         x.done == false ? (x.done = true) : (x.done = false);
+      }
+   });
+   window.localStorage.setItem("Tasks", JSON.stringify(tasks));
+}
